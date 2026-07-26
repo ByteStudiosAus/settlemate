@@ -65,5 +65,5 @@ ELEVENLABS_API_BASE = "https://api.elevenlabs.io"
 #   ELEVENLABS_AGENT_ID         -> the ElevenLabs Conversational AI agent to call as
 #   ELEVENLABS_PHONE_NUMBER_ID  -> the Twilio-connected ElevenLabs phone number to call FROM
 #   PINCH_WEBHOOK_SECRET        -> whsec_... returned by POST /webhooks when you register the
-#                                  webhook (Pinch has no portal UI for this — see CLAUDE.md)
+#                                  webhook (Pinch has no portal UI for this — API only)
 #   ANTHROPIC_API_KEY           -> only used by the local agents/ harness, not the Worker

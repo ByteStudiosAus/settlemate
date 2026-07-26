@@ -1,7 +1,7 @@
 /**
  * Pinch Payments API client (SANDBOX ONLY — base is https://api.getpinch.com.au/test).
  *
- * Contract (CLAUDE.md, hard-rule #4): every exported function returns
+ * Contract (hard-rule #4): every exported function returns
  * `T | StructuredError`. We NEVER throw a raw exception at a caller — network
  * failures, non-2xx responses, and JSON parse errors all come back as a
  * structured error object.
@@ -83,10 +83,11 @@ const TOKEN_REFRESH_SKEW_MS = 60_000;
 /**
  * The OAuth client_id.
  *
- * NOTE: Per the live Pinch docs, client_id is the APPLICATION ID (app_...), NOT
- * the publishable key (pk_...) — CLAUDE.md's wording is out of date. There is no
- * dedicated PINCH_APPLICATION_ID binding, so we store the Application ID in the
- * PINCH_PUBLISHABLE_KEY secret. If auth 401s, put the real app_... value there.
+ * NOTE: client_id is the APPLICATION ID (app_...), NOT the publishable key
+ * (pk_...) — Pinch's own docs wording is misleading here; verified against a
+ * live sandbox 200. There is no dedicated PINCH_APPLICATION_ID binding, so we
+ * store the Application ID in the PINCH_PUBLISHABLE_KEY secret. If auth 401s,
+ * put the real app_... value there.
  */
 function getClientId(env: Env): string {
   return env.PINCH_PUBLISHABLE_KEY;

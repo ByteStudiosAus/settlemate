@@ -10,7 +10,7 @@
  * Methods: `initialize`, `tools/list`, `tools/call`, `ping`. Notifications
  * (id absent) are acknowledged with 202 and no body, per JSON-RPC.
  *
- * agentId is resolved from `?agentId=` or the `x-agent-id` header (CLAUDE.md).
+ * agentId is resolved from `?agentId=` or the `x-agent-id` header.
  * A call with no agentId still lists tools, but `tools/call` refuses — the
  * permissions engine is keyed on a real agent.
  */

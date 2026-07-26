@@ -5,7 +5,7 @@
  * delivery with header `pinch-signature: t=<unix_ts>,v2=<hex>`, where
  * `v2 = HMAC-SHA256("{t}.{raw body}", <webhook secret>)` and the secret
  * (`whsec_...`) is returned once when the webhook is registered
- * (`POST /webhooks` — see CLAUDE.md for exactly where to run that). We reject
+ * (`POST /webhooks` — Pinch has no dashboard UI for this, API only). We reject
  * anything with a missing/wrong signature or a stale timestamp (>5 min, same
  * default the Pinch .NET SDK uses) before touching the body at all.
  *

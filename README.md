@@ -159,8 +159,7 @@ alongside it:
 
 Every Pinch fact this codebase relies on (auth quirks, response shapes, status
 vocabulary, date-validation limits, the Plans/Subscriptions behaviour above) was
-verified live against the sandbox — not taken on faith from the docs alone — and is
-recorded in `CLAUDE.md` for anyone extending this.
+verified live against the sandbox — not taken on faith from the docs alone.
 
 ## Test suite
 
@@ -169,8 +168,9 @@ and ElevenLabs are stubbed at the `fetch` level with response shapes captured fr
 real sandbox calls; KV is an in-memory mock. `test/webhooks.test.ts` exercises the
 **real** HMAC-SHA256 signing/verification path (constructs actual signatures with
 `crypto.subtle`, not a mock). `test/index.test.ts` proves the outer Worker try/catch
-actually catches async exceptions (a real regression this project hit — see
-`CLAUDE.md`).
+actually catches async exceptions, not just synchronous ones — every route handler
+call is `await`ed specifically so a downstream throw can't leak past it as a raw
+exception.
 
 ```bash
 npm test              # everything
@@ -334,7 +334,7 @@ authority) directly on the outbound-call request, and places the call.
 | `401` on `/admin/*` | Wrong/missing `ADMIN_KEY` → check the `Authorization: Bearer` header matches the deployed secret |
 | `charge_now` → "Bank Account required…" | Payer has no saved source → **re-seed** (or run `add_bank_account` for that payer first) |
 | `/admin/recovered` empty / `$0.00` | Payments not settled yet → use sandbox time-travel to advance settlement, or scope with `?payerId=<pyr_...>` to include realtime charges |
-| `GET /voice/payers` shows `$0` / duplicate names | An orphaned duplicate payer record from earlier testing — Pinch doesn't enforce payer-name uniqueness; find and cancel its scheduled payments directly (see CLAUDE.md) |
+| `GET /voice/payers` shows `$0` / duplicate names | An orphaned duplicate payer record from earlier testing — Pinch doesn't enforce payer-name uniqueness; find and cancel its scheduled payments directly |
 
 ### 9. Do NOT touch on demo day
 
@@ -435,10 +435,10 @@ totals — see `src/voice.ts` for full response shapes.
 
 ### `POST /webhooks/pinch` — Pinch settlement events
 
-Registered once via `POST https://api.getpinch.com.au/test/webhooks` (see
-[CLAUDE.md](CLAUDE.md) — Pinch has no dashboard UI for this). Verifies the
-`pinch-signature` header, writes a KV snapshot + audit entry for every event that
-references a payment.
+Registered once via `POST https://api.getpinch.com.au/test/webhooks` (Pinch has no
+dashboard UI for this — it's API-only: `{ uri, eventTypes? }`, returns a `whsec_...`
+signing secret you store as `PINCH_WEBHOOK_SECRET`). Verifies the `pinch-signature`
+header, writes a KV snapshot + audit entry for every event that references a payment.
 
 ## KV namespaces
 
@@ -475,7 +475,3 @@ references a payment.
    handler call in the Worker entry point is `await`ed inside the outer try/catch,
    specifically so this holds for async exceptions too, not just synchronous ones).
 5. Sandbox only — base URL is always `https://api.getpinch.com.au/test`.
-
-See [CLAUDE.md](CLAUDE.md) for the full set of verified Pinch API facts, KV
-conventions, and lessons learned from live debugging — written for whoever (human or
-AI) picks this project up next.

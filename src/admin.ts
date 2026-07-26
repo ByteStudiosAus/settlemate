@@ -6,7 +6,7 @@
  * a grant exists, every `enforce()` returns `no_grant`. It also serves the three
  * read/bootstrap endpoints the dashboard renders from.
  *
- * Every route requires `Authorization: Bearer <ADMIN_KEY>` (CLAUDE.md). Auth is
+ * Every route requires `Authorization: Bearer <ADMIN_KEY>`. Auth is
  * checked once, up front. Responses always go out via `jsonResponse()`; failures
  * use the structured-error shape (hard-rule #4) so no raw exception ever leaks.
  *
