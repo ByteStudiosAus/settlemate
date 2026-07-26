@@ -1,0 +1,44 @@
+# Local secrets for `wrangler dev` — copy to `.dev.vars` (gitignored) and fill in
+# real SANDBOX values. Never commit `.dev.vars` itself, and never point any of
+# this at Pinch's /live environment (hard-rule #5 — sandbox only).
+#
+#   cp .dev.vars.example .dev.vars
+
+# ── Pinch Payments (sandbox) ───────────────────────────────────────────────
+# client_id for OAuth is the Application ID (app_test_...), NOT the
+# publishable key (pk_...) — Pinch's docs are misleading here, verified
+# against a live sandbox 200. Get these from the Pinch dashboard's API Keys
+# section (test/sandbox mode).
+PINCH_PUBLISHABLE_KEY = "app_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+PINCH_SECRET_KEY = "sk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# Kept for reference / managed-merchant calls — not used for OAuth itself.
+PINCH_MERCHANT_ID = "mer_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# ── This Worker's own auth ─────────────────────────────────────────────────
+# Bearer token for /admin/* (REST admin + dashboard). Generate with:
+#   openssl rand -hex 24
+ADMIN_KEY = "replace-with-a-long-random-string"
+# Shared X-Voice-Secret header for /voice/* (ElevenLabs webhooks).
+VOICE_SECRET = "replace-with-a-long-random-string"
+
+# ── ElevenLabs Conversational AI (outbound calling — POST /admin/call) ─────
+# xi-api-key from ElevenLabs Settings -> API Keys.
+ELEVENLABS_API_KEY = "xi_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# The Conversational AI agent to place the call as (Agents Platform -> Agents).
+ELEVENLABS_AGENT_ID = "agent_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# The Twilio-connected ElevenLabs phone number to call FROM (Agents Platform
+# -> Phone Numbers) — this is ElevenLabs' internal id for the number, not the
+# E.164 phone number itself.
+ELEVENLABS_PHONE_NUMBER_ID = "phnum_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# ── Pinch webhooks (POST /webhooks/pinch) ──────────────────────────────────
+# The whsec_... secret returned ONCE by `POST /webhooks` when you register the
+# webhook (Pinch has no dashboard UI for this — API only, see CLAUDE.md).
+PINCH_WEBHOOK_SECRET = "whsec_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# ── NOT read from this file ─────────────────────────────────────────────────
+# ANTHROPIC_API_KEY (for the local agents/a2a.ts demo) is read directly from
+# the shell environment, not from .dev.vars — that file is only loaded by
+# `wrangler dev` for the Worker's own bindings. Export it when running the
+# script instead:
+#   ANTHROPIC_API_KEY=sk-ant-... ADMIN_KEY=... npm run a2a

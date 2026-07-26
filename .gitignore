@@ -1,0 +1,18 @@
+node_modules/
+.dev.vars
+.env
+.env.*
+.wrangler/
+dist/
+*.log
+
+# macOS
+.DS_Store
+
+# Local Claude Code tool permissions — machine-specific, not project config
+.claude/settings.local.json
+
+# Demo recordings — too large for git (exceed GitHub's 100MB file limit);
+# host these externally (e.g. a Loom/YouTube link in the README) instead
+*.mp4
+*.mov

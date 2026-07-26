@@ -1,0 +1,69 @@
+name = "agentrails"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# ── KV namespaces ────────────────────────────────────────────────────────────
+# GRANTS   : agent authority records          key = grant:<agentId>
+#            (also: demo:targetPayerId, seedpayer:<slug>,
+#             init:context:<payerId> — cached /voice/init payload, TTL 60s,
+#             pinch:event:<eventId> — webhook delivery dedup log,
+#             pinch:payment:<paymentId> — latest settlement-status snapshot,
+#             written by src/webhooks.ts, read by GET /admin/payments/status
+#             and GET /admin/recovered)
+# SPEND    : per-agent daily spend counters    key = spend:<agentId>:<YYYY-MM-DD>
+# AUDIT    : append-only audit log             key = audit:<ISO-ts>:<rand>
+# TOKENS   : cached Pinch OAuth access token   key = pinch:token
+# IDEMPOTENCY : create_payment_plan replay guard  key = idem:plan:<sha256>  (TTL 10m)
+#
+# Create these once with:
+#   wrangler kv namespace create GRANTS   && wrangler kv namespace create GRANTS   --preview
+#   wrangler kv namespace create SPEND    && wrangler kv namespace create SPEND    --preview
+#   wrangler kv namespace create AUDIT    && wrangler kv namespace create AUDIT    --preview
+#   wrangler kv namespace create TOKENS   && wrangler kv namespace create TOKENS   --preview
+# then paste the returned ids below.
+[[kv_namespaces]]
+binding = "GRANTS"
+id = "8a1cb9aa79e8410786b0740a3e4455b1"
+preview_id = "REPLACE_WITH_GRANTS_PREVIEW_ID"
+
+[[kv_namespaces]]
+binding = "SPEND"
+id = "2d894c0b26554237b7d8eb155062ca60"
+preview_id = "REPLACE_WITH_SPEND_PREVIEW_ID"
+
+[[kv_namespaces]]
+binding = "AUDIT"
+id = "aee059fac1e5424395bcfcf42ab03e3d"
+preview_id = "REPLACE_WITH_AUDIT_PREVIEW_ID"
+
+[[kv_namespaces]]
+binding = "TOKENS"
+id = "e0a70d716606401d9673c3b332821d36"
+preview_id = "REPLACE_WITH_TOKENS_PREVIEW_ID"
+
+[[kv_namespaces]]
+binding = "IDEMPOTENCY"
+id = "8e157f67f6a441829c1114e28fcbfc20"
+preview_id = "REPLACE_WITH_IDEMPOTENCY_PREVIEW_ID"
+
+# ── Non-secret vars ──────────────────────────────────────────────────────────
+[vars]
+PINCH_API_BASE = "https://api.getpinch.com.au/test"
+PINCH_AUTH_URL = "https://auth.getpinch.com.au/connect/token"
+PINCH_VERSION = "2020.1"
+ENABLE_TWILIO = "false"
+ELEVENLABS_API_BASE = "https://api.elevenlabs.io"
+
+# ── Secrets (set via `wrangler secret put <NAME>`) ───────────────────────────
+#   PINCH_SECRET_KEY            -> OAuth client_secret
+#   PINCH_PUBLISHABLE_KEY       -> OAuth client_id (Application ID). Merchant ID is deprecated for auth.
+#   PINCH_MERCHANT_ID           -> kept for reference / managed-merchant calls (NOT used for OAuth)
+#   ADMIN_KEY                   -> bearer for REST admin routes
+#   VOICE_SECRET                -> shared header for /voice/* webhook
+#   ELEVENLABS_API_KEY          -> xi-api-key for the ElevenLabs API (POST /admin/call)
+#   ELEVENLABS_AGENT_ID         -> the ElevenLabs Conversational AI agent to call as
+#   ELEVENLABS_PHONE_NUMBER_ID  -> the Twilio-connected ElevenLabs phone number to call FROM
+#   PINCH_WEBHOOK_SECRET        -> whsec_... returned by POST /webhooks when you register the
+#                                  webhook (Pinch has no portal UI for this — see CLAUDE.md)
+#   ANTHROPIC_API_KEY           -> only used by the local agents/ harness, not the Worker
